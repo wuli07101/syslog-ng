@@ -10,8 +10,6 @@ function lua_queue(msg)
 	local sampleJson = msg['MESSAGE']
     local data = cjson.decode(sampleJson)
 	
-	print(data["url"])
-
 	local request_body = [[login=user&password=123]]	
 	local response_body = {}
 	local result, statuscode, content = socketHttp.request{

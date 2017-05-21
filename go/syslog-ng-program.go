@@ -11,12 +11,12 @@ import (
 )
 
 var (
-	sysLogMsgList chan []byte
+	sysLogMsgList chan string
 	wg            sync.WaitGroup
 )
 
 func init() {
-	sysLogMsgList = make(chan []byte, 1000000)
+	sysLogMsgList = make(chan string, 1000000)
 }
 
 func main() {
@@ -31,7 +31,7 @@ func readMsgFromStdin() {
 	reader := bufio.NewReader(os.Stdin)
 	for {
 		data, _, _ := reader.ReadLine()
-		sysLogMsgList <- data
+		sysLogMsgList <- string(data)
 	}
 	wg.Done()
 }
@@ -41,7 +41,7 @@ func dealMsg() {
 	for {
 		select {
 		case syslogMsg := <-sysLogMsgList:
-			syslogContent, err := simplejson.NewJson(syslogMsg)
+			syslogContent, err := simplejson.NewJson([]byte(syslogMsg))
 			if err == nil {
 				jsonUrl, isJsonUrlOk := syslogContent.CheckGet("url")
 				if isJsonUrlOk == false {
